@@ -1,0 +1,398 @@
+\documentclass{beamer}  
+%\usetheme{Madrid}
+\usetheme{Warsaw}
+\setbeamertemplate{headline}{}
+% Tùy chỉnh footer chia thành 3 phần
+\setbeamertemplate{footline}{
+	\leavevmode%
+	\hbox{%
+		\begin{beamercolorbox}[wd=0.33\paperwidth,ht=2.5ex,dp=1ex,center]{author in head/foot}%
+			\insertshortauthor % Phần bên trái
+		\end{beamercolorbox}%
+		\begin{beamercolorbox}[wd=0.33\paperwidth,ht=2.5ex,dp=1ex,center]{title in head/foot}%
+			\insertshorttitle % Phần giữa
+		\end{beamercolorbox}%
+		\begin{beamercolorbox}[wd=0.33\paperwidth,ht=2.5ex,dp=1ex,center]{date in head/foot}%
+			Slide \insertframenumber{} / \inserttotalframenumber % Phần bên phải
+		\end{beamercolorbox}%
+	}%
+	\vskip0pt%
+}
+
+%\usecolortheme{dolphin}
+\definecolor{customblue}{RGB}{0,35,102}
+\setbeamercolor{structure}{fg=customblue}
+\usepackage[utf8]{inputenc}  
+\usepackage[T5]{fontenc}  
+\usepackage[vietnamese]{babel}  
+\usepackage{xcolor} % Gói xcolor để sử dụng màu  
+\usepackage{tcolorbox}
+\usepackage{tabularx}
+\usepackage{pifont}
+\usepackage{ragged2e}
+\title[Chuyên đề tốt nghiệp] %optional
+{Ứng dụng các mô hình chuỗi thời gian trong phân tích dự báo doanh thu theo ngày và tìm giá tối ưu của một cơ sở thuộc Công ty Minh Hà}
+
+
+
+\author[MFE - NEU] % (optional, for multiple authors)
+{\large Chuyên đề tốt nghiệp chuyên ngành Toán Kinh Tế}
+
+\institute[] % (optional)
+{ \centering
+	%
+	%\justifying
+    \large Sinh viên: Trương Ngọc Thuỳ Trang\\
+    \large Mã sinh viên : 11217004 - TOKT63\\
+    \large Giảng viên HD:  ThS.Bùi Dương Hải
+	
+
+}
+\date[12-2024] % (optional)
+{\small Hà Nội, Tháng 12-2024}
+
+
+
+
+\begin{document}
+	
+	% Trang tiêu đề
+	\frame{\titlepage}
+	
+	% Slide 1: Lý do chọn đề tài
+	\begin{frame}{Lý do chọn đề tài}
+		\begin{itemize}
+			\item Dự báo doanh thu là hoạt động quan trọng, giúp doanh nghiệp lập kế hoạch tài chính và tối ưu hóa hoạt động kinh doanh.
+			\item Việc đưa ra mức doanh thu mục tiêu trong lương lai cũng cần có căn cứ.
+			\item Bên cạnh đó việc tìm mức giá bán để đạt được mục tiêu doanh thu hay lợi nhuận đề ra là cần thiết.
+		\end{itemize}
+	\end{frame}
+	
+	% Slide 2: Phương pháp và phạm vi nghiên cứu 
+	\begin{frame}{Phương pháp và Phạm vi nghiên cứu}
+		\begin{block}{Phương pháp nghiên cứu}
+			\begin{itemize}
+				\item Sử dụng các mô hình chuỗi thời gian ARIMA, LSTM dự báo doanh thu.
+				\item Tìm hàm cầu dựa vào mô hình VAR
+				\item Tối ưu giá bán thông qua phương pháp tối ưu hoá và học tăng cường (Reinforcement Learning).
+			\end{itemize}
+		\end{block}
+		
+		\begin{block}{Phạm vi nghiên cứu}
+		    \begin{itemize} 
+				\item Dữ liệu từ cơ sở bán linh kiện của Công ty Minh Hà từ ngày 04/01/2021-30/01/2024
+				\item Nghiên cứu tập trung vào chuỗi thời gian doanh thu, số lượng bán ra và giá bán.
+			\end{itemize}
+		\end{block}
+		
+	\end{frame}
+	
+	\begin{frame}{Nội dung}
+		\tableofcontents
+	\end{frame}
+	
+	\AtBeginSection[]{
+	   \begin{frame}{Nội dung}
+		 \tableofcontents[currentsection]
+	   \end{frame}
+	}
+
+	
+  \section{Tổng quan vấn đề nghiên cứu}
+	\begin{frame}{1.Tổng quan vấn đề nghiên cứu}
+		%Tổng quan thị trường
+		\begin{block}{Tổng quan thị trường linh kiện điện tử}
+			\begin{itemize} 
+				\item Thị trường linh kiện điện tử trên thế giới và tại Việt Nam đều đang trong giai đoạn phát triển mạnh mẽ, với nhiều cơ hội và thách thức. 
+			\end{itemize}
+		\end{block}
+		
+		% Giới thiệu Công ty Minh Hà
+		\begin{block}{Giới thiệu Công ty Minh Hà}
+			\begin{itemize}
+				\item Thành lập năm 2016, chuyên sản xuất và cung cấp linh kiện điện tử.
+				\item Sản phẩm: IC, cảm biến, bo mạch,... và giải pháp công nghệ.
+				\item Nhiều cơ sở hoạt động tại Hà Nội và Hồ Chí Minh.
+				
+			\end{itemize}
+		\end{block}
+	\end{frame}	
+	\begin{frame}{1.Tổng quan vấn đề nghiên cứu}
+		\begin{block}{Các nghiên cứu về dự báo doanh thu}
+		   \begin{itemize}
+			 \item Soy Temür, A., Akgün, A.,vs Temür, P. (2019). “Forecasting sales for real
+			 estate companies”, Journal of Business Research, 98, 25-35.
+			 \item Hồ Khôi. (2020). “Xây dựng ứng dụng phân tích dự báo doanh thu doanh
+			 nghiệp Golf”, Viện Hàn Lâm Khoa học và Công nghệ Việt Nam.
+		   \end{itemize}
+		 \end{block}
+		 \begin{block}{Nghiên cứu về xác định hàm cầu}
+		  	\begin{itemize}
+		  		\item Lutz Kilian và Cheolbeom Park (2009)
+		  		nghiên cứu đề tài “The Demand for Energy and Price Volatility: A VAR Approach”
+		  	\end{itemize}
+		  \end{block}
+		  \begin{block}{Nghiên cứu về mô hình tối ưu giá}
+		  	\begin{itemize}
+		  		\item Chandra et al. (2020) với bài nghiên cứu “AI Based Pricing Strategy in ECommerce”
+		  	\end{itemize}
+		  \end{block}
+	\end{frame}
+	
+  \section{Dữ liệu - Thống kê mô tả}
+	\begin{frame}{2.Dữ liệu - Thống kê mô tả}
+       Công ty Minh Hà cung cấp bộ dữ liệu của một cơ sở bán linh kiện điện tử thuộc công ty.
+			\begin{table}[h]
+				\centering
+				   Bảng 1:Mô tả dữ liệu gốc
+				
+				   \begin{tabularx}{\textwidth}{|c|X|}
+				    	\hline
+				    	\textbf{Ngày (t)} & Từ ngày 04/01/2021 đến 30/01/2024 ($t = 1,2,\ldots,1066$) \\ \hline
+					    \textbf{Dòng sản phẩm (i)} & 19 dòng sản phẩm thuộc Công ty Minh Hà ($i = 1,2,\ldots,19$) \\ \hline
+					    
+					    \textbf{Giá ($P_{it}$)} & Giá bán tại ngày $t$ của dòng sản phẩm $i$ \\ \hline
+					    \textbf{Số lượng ($Q_{it}$)} & Số lượng sản phẩm bán ra ngày $t$ của dòng sản phẩm $i$ \\ \hline
+					    \textbf{Doanh thu ($R_{it}$)} & Doanh thu ngày $t$ của dòng sản phẩm $i$ \\ \hline
+				   \end{tabularx}
+				   
+			
+			\end{table}
+	\end{frame}
+	
+	\begin{frame}{2.1.Phân tích doanh thu}
+		\begin{figure}
+			\centering
+			% Chèn hình đầu tiên
+			\includegraphics[width=0.45\textwidth]{E:/Chuyên đề/Ảnh/DT_year.png}
+			\hfill
+			% Chèn hình thứ hai
+			\includegraphics[width=0.45\textwidth]{E:/Chuyên đề/Ảnh/DT_quarter.png}
+			\hfill
+			% Chèn hình thứ ba
+			\includegraphics[width=0.45\textwidth]{E:/Chuyên đề/Ảnh/DT_month.png}
+		\end{figure}
+		\vspace{0.01cm}
+		\centering
+		% Chú thích hình (tuỳ chọn)
+		\textit{Hình 1: Tổng doanh thu cơ sở theo năm, quý, tháng  }
+	\end{frame}
+	
+    \begin{frame}{2.2.Tính toán số liệu mới}
+    	    \baselineskip=18pt
+    	    %\setlength{\parskip}{10pt}
+    		Tổng doanh thu:\quad
+    		$TR_t = \sum_{i=1}^{19}  R_{it}$\\
+    		Tổng số lượng:\quad
+    		$TQ_t = \sum_{i=1}^{19}  Q_{it}
+    		$
+    	
+    	
+    		Để đảm bảo công thức $R = P \cdot Q$, nghiên cứu sẽ tính mức giá chung đại diện là trung bình có trọng số, với trọng số là tỷ lệ số lượng bán ra:
+    		\[
+    		P_t^c = \frac{\sum_{i=1}^{19} P_{it} Q_{it}}{TQ_t} = \frac{\sum_{i=1}^{19} P_{it} Q_{it}}{\sum_{i=1}^{19} Q_{it}}
+    		\]
+    	
+    	
+ 
+    	\begin{itemize}
+    			\item $P_t^c$: Mức giá chung của ngày $t$.
+    			\item $Q_{it}$: Số lượng bán ra tại ngày $t$ của sản phẩm $i$.
+    			\item $P_{it}$: Giá bán tại ngày $t$ của sản phẩm $i$.
+    			\item $R_{it}$: Doanh thu tại ngày $t$ của sản phẩm $i$.
+    	\end{itemize}
+    \end{frame}
+    
+    	\begin{frame}{2.3.Phân tích tương quan}
+    	\begin{figure}
+    		\centering
+    		% Chèn hình đầu tiên
+    		\includegraphics[width=0.45\textwidth]{E:/Chuyên đề/Ảnh/scatter.png}
+    		\hfill
+    		% Chèn hình thứ hai
+    		\includegraphics[width=0.45\textwidth]{E:/Chuyên đề/Ảnh/MGC_DT.png}
+    		\hfill
+    		% Chèn hình thứ ba
+    		\includegraphics[width=0.45\textwidth]{E:/Chuyên đề/Ảnh/DT_SL.png}
+    	\end{figure}
+    	\vspace{0.01cm}
+    	\centering
+    	% Chú thích hình (tuỳ chọn)
+    	\textit{Hình 2: Tương quan giữa các biến }
+    \end{frame}
+    
+  \section{Mô hình và kết quả}
+	%Slide:Diễn giải các bước làm
+	\begin{frame}{3.Mô hình và kết quả}
+		Nghiên cứu sẽ lần lượt thực hiện các bước sau đây:
+		\begin{enumerate}
+			\item Phân tích dự báo tổng doanh thu từ ARIMA và LSTM, chọn ra mô hình dự báo tối ưu nhất và coi đó là mức doanh thu công ty $TR_t^*$ yêu cầu đạt được.
+			\item Tìm hàm cầu từ phân tích mô hình VAR giữa mức giá chung $P_t^c$ và tổng số lượng $TQ_t$.
+			\item Tìm mức giá chung tối ưu thông qua phương pháp tối thiểu hoá hàm mục tiêu và phương pháp học tăng cường.
+		\end{enumerate}
+	\end{frame}
+				
+	% Slide : Mô hình ARIMA
+	\begin{frame}{3.1.Mô hình ARIMA}
+		\begin{block}{ARIMA(0,1,1):}
+           
+           \[
+           \Delta TR_t = -0.7115 \cdot \epsilon_{t-1} + \epsilon_t
+           \]
+		\end{block}
+		\begin{block}{ARIMA(5,1,1):}
+			\[
+			\Delta TR_t = -0.1783\Delta TR_{t-1} - 0.0792\Delta TR_{t-2} - 0.0792\Delta TR_{t-3}
+			\]
+			\[- 0.0669\Delta TR_{t-4} - 0.0373\Delta TR_{t-5} - 0.557\epsilon_{t-1} + \epsilon_t
+			\]
+		\end{block}
+		Trong đó:
+		\begin{itemize}
+			\item $\Delta TR_t$: Sai phân bậc 1 của chuỗi $TR_t$.
+			\item $\Delta TR_{t-k}$: Sai phân bậc 1 tại độ trễ $k$.
+			\item $\epsilon_t$: Thành phần nhiễu trắng tại thời điểm $t$.
+			\item $\epsilon_{t-1}$: Thành phần nhiễu trắng tại thời điểm $t-1$.
+		\end{itemize}
+	\end{frame}
+	
+	% Slide: LSTM
+	\begin{frame}{3.2.Mô hình LSTM}
+		Để chuẩn bị cho mô hình, chia chuỗi tổng doanh thu thành tập huấn luyện (train) và tập kiểm thử (test) với tỷ lệ 80:20. Sau đó, chuẩn hoá dữ liệu chuỗi doanh thu theo phương pháp chuẩn hoá MinMax.
+		\begin{figure}
+			\centering
+			\includegraphics[width=0.75\textwidth]{E:/Chuyên đề/Ảnh/LSTMmodel.png}
+			\hfill
+			
+		\end{figure}
+		\vspace{0.01cm}
+		\centering
+		\textit{Hình 3: Mô hình LSTM được xây dựng trong Python }
+	\end{frame}
+	\begin{frame}{3.2.Mô hình LSTM}
+		\begin{figure}
+			\centering
+			\includegraphics[width=0.75\textwidth]{E:/Chuyên đề/Ảnh/LSTM_test.png}
+			\hfill
+
+		\end{figure}
+		\vspace{0.01cm}
+		\centering
+		\textit{Hình 4: Tổng doanh thu thực tế và dự đoán trên tập test }
+	\end{frame}
+	
+	\begin{frame}{3.3.Đánh giá hiệu quả mô hình}
+		\begin{table}[h]
+			\centering
+			Bảng 2: Đánh giá hiệu quả mô hình
+			
+			\begin{tabularx}{\textwidth}{|c|X|X|X|}
+				\hline
+				\textbf{Chỉ số} & ARIMA(0,1,1) & ARIMA(5,1,1) & LSTM  \\ \hline
+				\textbf{RMSE} & 4015313.565 & 4014541.252 & 2277660.019 \\ \hline
+				\textbf{MAPE} & 13.581\% & 13.522\% & 6.936\% \\ \hline
+			\end{tabularx}
+		\end{table}
+		
+		\begin{itemize} % Mã 220 là một kiểu mũi tên trong pifont
+			\item Việc mô hình ARIMA(5,1,1) có RMSE và MAPE nhỏ hơn so với mô hình ARIMA(0,1,1) chứng tỏ rằng khi có đủ dữ liệu lịch sử và hiệu ứng tự hồi quy, mô hình phức tạp hơn có thể học hỏi và đưa ra dự đoán chính xác hơn.
+			
+			\item Mô hình LSTM có RMSE và MAPE đều nhỏ hơn đáng kể so với mô hình. Vậy nên mô hình LSTM sẽ tối ưu hơn trong việc dự báo doanh thu của cơ sở Công ty Minh Hà.
+			\item  Bài nghiên cứu này dùng kết quả dự báo doanh thu trong 30 ngày tiếp theo từ mô hình LSTM và xem đó là mức doanh thu mà Công ty yêu cầu đạt được trong 30 ngày này. 
+		\end{itemize}
+		
+	\end{frame}
+	
+	% Slide: Hàm cầu từ mô hình VAR
+    \begin{frame}{3.4.Hàm cầu từ mô hình VAR}
+    	\begin{itemize}
+    	    \item Kết quả kiểm định tính dừng cho ra sai phân bậc 1 của Mức giá chung và sai phân bậc 1 Tổng số lượng là chuỗi dừng với mức ý nghĩa lựa chọn 5\%.
+    	    \item Mô hình VAR cho hai chuỗi sai phân bậc 1 được lựa chọn theo tiêu chí AIC có độ trễ là 6.
+    	    \item Khi đó hàm cầu có dạng:
+    	\end{itemize}
+    	    \[
+    	    TQ_t = 0.389 - 0.00005P_{t-1}^c + 0.0002P_{t-2}^c - 0.00003 P_{t-3}^c - 0.0002P_{t-4}^c
+    	    \]
+    	    \[
+        	- 0.0001P_{t-5}^c + 0.0001P_{t-6}^c - 0.00003  P_{t-7}^c
+        	+ 0.361 TQ_{t-1} + 0.183 TQ_{t-2}
+    	    \]
+    	    \[
+    	    + 0.196  TQ_{t-3} + 0.144  TQ_{t-4} + 0.066TQ_{t-5}
+    	    - 0.006TQ_{t-6} + 0.055TQ_{t-7}
+    	    \]
+    	
+    \end{frame}
+	
+
+	\begin{frame}{3.5.Tối ưu giá bán - Phương pháp tối thiểu hoá hàm mục tiêu}
+		\begin{block}{Hàm mục tiêu:}
+		\[
+		S = TR_t^*-TR_t 
+		\]
+		\[
+		S = TR_t^* - P_t^c \cdot f(P_{t-1}^c, \dots, P_{t-7}^c, TQ_{t-1}, \dots, TQ_{t-7}) \to \min
+		\]
+		\end{block}
+
+
+		
+		Trong đó:\\
+		\begin{itemize}
+			\item $TR_t = P_t^c \cdot TQ_t$ : là hàm doanh thu\\
+		    \item $TQ_t = f(P_{t-1}^c, \dots, P_{t-7}^c, TQ_{t-1}, \dots, TQ_{t-7})$ : là hàm cầu được xác định từ mô hình VAR.\\
+		    \item $TR_t^*$ : Tổng doanh thu mục tiêu được xác định từ LSTM
+       \end{itemize}
+	\end{frame}
+	
+
+	\begin{frame}{3.5.Tối ưu giá bán - Phương pháp học tăng cường}
+		\begin{itemize}
+			\item Học tăng cường (RL) là một phương pháp học máy mà trong đó, một tác nhân (agent) học cách đưa ra các quyết định tối ưu thông qua tương tác với môi trường và nhận phần thưởng (reward). 
+			\item Trong bài toán định giá, RL có thể được sử dụng để tìm giá bán tối ưu nhằm tối ưu hóa một mục tiêu, mục tiêu của nghiên cứu này tối thiểu hoá hàm S.
+		\end{itemize}
+		\begin{block}{Quy trình tìm giá tối ưu}
+			\begin{enumerate}
+			   \item Tạo môi trường RL dựa trên dữ liệu lịch sử của công ty.
+			   \item Q-Learning để tối ưu giá.
+			   \item Huấn luyện mô hình RL.
+			 \end{enumerate}
+		\end{block}
+	\end{frame}
+
+	\begin{frame}{3.5.Tối ưu giá bán - Kết quả}
+		\begin{itemize}
+			\item Sau khi huấn luyện mô hình RL, mức giá tối ưu trung bình trong 30 ngày tiếp theo là 71161.487 VNĐ. 
+			\item So với mức giá tối ưu trung bình từ phương pháp tối thiểu hoá hàm mục tiêu là 70821.838 VNĐ thì mức giá tối ưu từ mô hình học tăng cường cao hơn 0.48\%.
+			\item Kết quả từ phương pháp tối thiểu hóa hàm mục tiêu có thể cung cấp một mức giá tối ưu trong điều kiện ổn định và biết trước các thông số như doanh thu mục tiêu và số lượng bán dự báo. 
+			\item Nhưng với học tăng cường, mức giá có thể được điều chỉnh theo thời gian, giúp tìm ra mức giá tối ưu hơn trong bối cảnh thay đổi và không chắc chắn.
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{Kết luận}
+		\begin{itemize}
+			\item Sau quá trình nghiên cứu, chuyên đề đã tìm hiểu các phương pháp và mô hình liên quan đến phân tích và dự báo chuỗi thời gian. 
+			\item Ứng dụng các mô hình ARIMA và LSTM để dự báo doanh thu, tìm ra hàm cầu dựa vào mô hình VAR, đồng thời tìm giá bán tối ưu sản phẩm cho một cơ sở thuộc Công ty Cổ phần Công nghệ và Sản xuất Minh Hà.
+			\item Việc kết hợp các mô hình mang đến một hướng tiếp cận mới mẻ. Khiến cho việc đưa ra chính sách về giá có căn cứ hơn.
+			\item Tuy nhiên việc thử nghiệm vào thực tế để xem mức giá nào là mức giá tối ưu hơn thì cần thêm dữ liệu từ Công ty.
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}
+		\begin{figure}
+			\centering
+			% Chèn hình đầu tiên
+			\includegraphics[width=0.49\textwidth]{E:/Chuyên đề/Ảnh/LOGO_English-407x400.jpg}
+			\hfill
+		\end{figure}
+		\centering
+		\textcolor{blue}{\Huge}
+		\textbf{\huge Cảm ơn thầy cô đã lắng nghe!} \\[12pt]
+		
+	\end{frame}
+
+\end{document}
+
+
+
+
